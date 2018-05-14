@@ -23,7 +23,6 @@ fi
 JIRA_TOKEN=$(echo -n "$JIRA_USER:$JIRA_PASS" | base64)
 JIRA_ISSUE_PATTERN="${JIRA_PROJECT_CODE}-[0-9]+"
 
-
 jira:get_global_status()
 {
     curl --silent \
