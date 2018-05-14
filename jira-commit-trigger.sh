@@ -1,4 +1,8 @@
 #!/bin/bash
+dirname=$(dirname $0)
+source $dirname/config.sh
+source $dirname/jira.sh
+
 LOG_RANGE=$1
 
 if [[ -z "$LOG_RANGE" ]]
@@ -7,7 +11,6 @@ then
     exit 1
 fi
 
-source config.sh
 
 if [[ -z "$JIRA_USER" ]]
 then
@@ -27,8 +30,6 @@ then
     return
 fi
 
-source config.sh
-source jira.sh
 
 git log --extended-regexp --grep "$(jira:issue_pattern $JIRA_PROJECT_CODE)" --format=%h "$LOG_RANGE" | while read commit_hash
 do
