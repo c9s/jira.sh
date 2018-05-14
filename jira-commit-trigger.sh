@@ -27,15 +27,16 @@ then
     return
 fi
 
+source config.sh
 source jira.sh
 
-git log --extended-regexp --grep "$(jira:issue_pattern)" --format=%h "$LOG_RANGE" | while read commit_hash
+git log --extended-regexp --grep "$(jira:issue_pattern $JIRA_PROJECT_CODE)" --format=%h "$LOG_RANGE" | while read commit_hash
 do
     commit_full=$(git --no-pager log -1 $commit_hash)
     commit_body=$(git --no-pager log --format=%b -1 $commit_hash)
     echo "Processing commit '$commit_hash'..."
     git --no-pager log --format=%b -1 $commit_hash \
-        | grep -E -o "$(jira:issue_pattern)" | uniq \
+        | grep -E -o "$(jira:issue_pattern $JIRA_PROJECT_CODE)" | uniq \
         | while read matches
     do
         # Expand matches

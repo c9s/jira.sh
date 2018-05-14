@@ -1,7 +1,8 @@
 #!/bin/bash
 jira:issue_pattern()
 {
-    echo "${JIRA_PROJECT_CODE}-[0-9]+"
+    local code=$1
+    echo "${code}-[0-9]+"
 }
 
 jira:token()
