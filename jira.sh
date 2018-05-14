@@ -1,10 +1,28 @@
-JIRA_USER=
-JIRA_PASS=
+#!/bin/bash
+source config.sh
 
+if [[ -z "$JIRA_USER" ]]
+then
+    echo "JIRA_USER is required."
+    exit 0
+fi
+
+if [[ -z "$JIRA_PASS" ]]
+then
+    echo "JIRA_PASS is required."
+    exit 0
+fi
+
+if [[ -z "$JIRA_DOMAIN" ]]
+then
+    echo "JIRA_DOMAIN is required."
+    exit 0
+fi
+
+# dynamic generated environment variables
 JIRA_TOKEN=$(echo -n "$JIRA_USER:$JIRA_PASS" | base64)
+JIRA_ISSUE_PATTERN="${JIRA_PROJECT_CODE}-[0-9]+"
 
-JIRA_DOMAIN=aa.atlassian.net
-ISSUE_PATTERN="AA-[0-9]+"
 
 jira:get_global_status()
 {
@@ -59,6 +77,12 @@ jira:issue()
         --header "Authorization: Basic ${JIRA_TOKEN}" \
         --header 'Content-Type: application/json' \
         --url "https://${JIRA_DOMAIN}/rest/api/2/issue/${issue_key}"
+}
+
+jira:issue_is_subtask()
+{
+    local issue_key=$1
+    jira:issue $issue_key | jq ".fields.issuetype.subtask"
 }
 
 
