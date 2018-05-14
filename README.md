@@ -5,9 +5,12 @@ JIRA Client for shell scripts.
 
 ## Setting up
 
+Go to your profile to get an API token
+<https://id.atlassian.com/manage/api-tokens>:
+
 ```sh
 export JIRA_USER="myaccount@gmail.com"
-export JIRA_PASS="xxxx"
+export JIRA_PASS="your-token-here"
 
 export JIRA_DOMAIN="yoursite.atlassian.net"
 export JIRA_PROJECT_CODE="ST"
