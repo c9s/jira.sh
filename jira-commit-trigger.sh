@@ -8,15 +8,34 @@ then
 fi
 
 source config.sh
+
+if [[ -z "$JIRA_USER" ]]
+then
+    echo "JIRA_USER is required."
+    return
+fi
+
+if [[ -z "$JIRA_PASS" ]]
+then
+    echo "JIRA_PASS is required."
+    return
+fi
+
+if [[ -z "$JIRA_DOMAIN" ]]
+then
+    echo "JIRA_DOMAIN is required."
+    return
+fi
+
 source jira.sh
 
-git log --extended-regexp --grep "$JIRA_ISSUE_PATTERN" --format=%h "$LOG_RANGE" | while read commit_hash
+git log --extended-regexp --grep "$(jira:issue_pattern)" --format=%h "$LOG_RANGE" | while read commit_hash
 do
     commit_full=$(git --no-pager log -1 $commit_hash)
     commit_body=$(git --no-pager log --format=%b -1 $commit_hash)
     echo "Processing commit '$commit_hash'..."
     git --no-pager log --format=%b -1 $commit_hash \
-        | grep -E -o "$JIRA_ISSUE_PATTERN" | uniq \
+        | grep -E -o "$(jira:issue_pattern)" | uniq \
         | while read matches
     do
         # Expand matches
