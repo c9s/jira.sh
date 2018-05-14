@@ -1,33 +1,19 @@
 #!/bin/bash
-source config.sh
+jira:issue_pattern()
+{
+    echo "${JIRA_PROJECT_CODE}-[0-9]+"
+}
 
-if [[ -z "$JIRA_USER" ]]
-then
-    echo "JIRA_USER is required."
-    exit 0
-fi
-
-if [[ -z "$JIRA_PASS" ]]
-then
-    echo "JIRA_PASS is required."
-    exit 0
-fi
-
-if [[ -z "$JIRA_DOMAIN" ]]
-then
-    echo "JIRA_DOMAIN is required."
-    exit 0
-fi
-
-# dynamic generated environment variables
-JIRA_TOKEN=$(echo -n "$JIRA_USER:$JIRA_PASS" | base64)
-JIRA_ISSUE_PATTERN="${JIRA_PROJECT_CODE}-[0-9]+"
+jira:token()
+{
+    echo -n "$JIRA_USER:$JIRA_PASS" | base64
+}
 
 jira:get_global_status()
 {
     curl --silent \
         --request GET \
-        --header "Authorization: Basic ${JIRA_TOKEN}" \
+        --header "Authorization: Basic $(jira:token)" \
         --header "Accept: application/json" \
         --header "Content-Type: application/json" \
         "https://$JIRA_DOMAIN/rest/api/2/status"
@@ -60,7 +46,7 @@ jira:issue_add_comment()
         --silent \
         --request POST \
         --header "Accept: application/json" \
-        --header "Authorization: Basic ${JIRA_TOKEN}" \
+        --header "Authorization: Basic $(jira:token)" \
         --header 'Content-Type: application/json' \
         --data "{ \"body\": \"${comment}\" }" \
         --url "https://${JIRA_DOMAIN}/rest/api/2/issue/${issue_key}/comment"
@@ -73,7 +59,7 @@ jira:issue()
         --silent \
         --request GET \
         --header "Accept: application/json" \
-        --header "Authorization: Basic ${JIRA_TOKEN}" \
+        --header "Authorization: Basic $(jira:token)" \
         --header 'Content-Type: application/json' \
         --url "https://${JIRA_DOMAIN}/rest/api/2/issue/${issue_key}"
 }
@@ -92,7 +78,7 @@ jira:issue_get_transitions()
         --silent \
         --request GET \
         --header "Accept: application/json" \
-        --header "Authorization: Basic ${JIRA_TOKEN}" \
+        --header "Authorization: Basic $(jira:token)" \
         --header 'Content-Type: application/json' \
         --url "https://${JIRA_DOMAIN}/rest/api/2/issue/${issue_key}/transitions"
 }
@@ -105,7 +91,7 @@ jira:issue_do_transition()
         --silent \
         --request POST \
         --header "Accept: application/json" \
-        --header "Authorization: Basic ${JIRA_TOKEN}" \
+        --header "Authorization: Basic $(jira:token)" \
         --header 'Content-Type: application/json' \
         --data "{ \"transition\": { \"id\": ${transition_id} } }" \
         --url "https://${JIRA_DOMAIN}/rest/api/2/issue/${issue_key}/transitions"
