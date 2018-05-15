@@ -65,6 +65,12 @@ jira:issue()
         --url "https://${JIRA_DOMAIN}/rest/api/2/issue/${issue_key}"
 }
 
+jira:issue_is_story()
+{
+    local issue_key=$1
+    jira:issue $issue_key | jq -r '.fields.issuetype.name == "Story"'
+}
+
 jira:issue_is_bug()
 {
     local issue_key=$1
